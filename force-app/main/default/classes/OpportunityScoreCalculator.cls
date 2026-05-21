@@ -16,6 +16,7 @@ public with sharing class OpportunityScoreCalculator {
         calculateAndSave(new Set<Id>{ opportunityId });
     }
 
+
     @AuraEnabled(cacheable=true)
     public static ScoreWrapper getScoreData(Id opportunityId) {
         List<Opportunity_Score__c> scores = [
