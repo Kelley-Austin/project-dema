@@ -1,0 +1,92 @@
+<template>
+    <lightning-card>
+        <div slot="title">
+            <lightning-icon icon-name="utility:chart" size="small" class="slds-m-right_x-small"></lightning-icon>
+            Opportunity Intelligence Score
+        </div>
+
+        <div class="slds-p-around_medium">
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-spinner alternative-text="Calculating score..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template lwc:elseif={hasScore}>
+                <!-- Score ring -->
+                <div class="ring-container slds-m-bottom_medium">
+                    <svg viewBox="0 0 120 120" class="score-ring">
+                        <circle cx="60" cy="60" r="54"
+                                fill="none"
+                                stroke="#e0e0e0"
+                                stroke-width="10"/>
+                        <circle cx="60" cy="60" r="54"
+                                fill="none"
+                                stroke={ringColor}
+                                stroke-width="10"
+                                stroke-linecap="round"
+                                stroke-dasharray={circumference}
+                                stroke-dashoffset={dashOffset}
+                                transform="rotate(-90 60 60)"/>
+                        <text x="60" y="55" text-anchor="middle" class="score-number">{compositeScoreDisplay}</text>
+                        <text x="60" y="71" text-anchor="middle" class="score-sub-label">/ 100</text>
+                    </svg>
+                    <p class="slds-text-align_center slds-text-color_weak slds-m-top_x-small slds-text-body_small">
+                        {scoreRating}
+                    </p>
+                </div>
+
+                <!-- Criteria breakdown -->
+                <div class="criteria-breakdown">
+                    <div class="criteria-row slds-m-bottom_small">
+                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
+                            <span class="slds-text-body_small">Deal Size</span>
+                            <strong class="slds-text-body_small">{dealSizeScoreDisplay}</strong>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill progress-deal" style={dealSizeBarStyle}></div>
+                        </div>
+                    </div>
+
+                    <div class="criteria-row slds-m-bottom_small">
+                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
+                            <span class="slds-text-body_small">Engagement (last 90 days)</span>
+                            <strong class="slds-text-body_small">{engagementScoreDisplay}</strong>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill progress-engagement" style={engagementBarStyle}></div>
+                        </div>
+                    </div>
+
+                    <div class="criteria-row slds-m-bottom_small">
+                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
+                            <span class="slds-text-body_small">Competitive Risk</span>
+                            <strong class="slds-text-body_small">{competitiveRiskDisplay}</strong>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill progress-risk" style={competitiveRiskBarStyle}></div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-align_absolute-center slds-p-around_medium slds-text-align_center">
+                    <p class="slds-text-color_weak slds-text-body_small">
+                        No score data yet. Click <strong>Calculate Score</strong> to get started.
+                    </p>
+                </div>
+            </template>
+        </div>
+
+        <div slot="footer">
+            <lightning-button
+                label="Calculate Score"
+                variant="brand"
+                icon-name="utility:refresh"
+                onclick={handleCalculate}
+                disabled={isLoading}>
+            </lightning-button>
+        </div>
+    </lightning-card>
+</template>
